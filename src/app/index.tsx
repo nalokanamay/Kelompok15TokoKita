@@ -1,98 +1,106 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import {
+  Alert, // Ganti Button dengan ini
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function Index() {
+  const [text, setText] = useState("");
+  const [displayText, setDisplayText] = useState("");
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+  const handlePress = () => {
+    setDisplayText(text);
+    Alert.alert("Informasi", `Kamu mengetik: ${text}`);
+  };
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <View style={styles.container}>
+      {/* Ikon information-circle di atas (SUDAH BENAR) */}
+      <View style={styles.iconContainer}>
+        <Ionicons name="information-circle" size={50} color="red" />
+      </View>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      <Text style={styles.title}>Hello World</Text>
+      
+      <TextInput
+        placeholder="Type here..."
+        style={styles.input}
+        value={text}
+        onChangeText={setText}
+      />
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      {/* === PERBAIKAN: Tombol Kustom agar bisa memuat Ikon === */}
+      <TouchableOpacity style={styles.customButton} onPress={handlePress}>
+        {/* Ikon hand-left di dalam tombol */}
+        <Ionicons name="hand-left" size={24} color="white" style={styles.buttonIcon} />
+        <Text style={styles.buttonText}>CLICK ME</Text>
+      </TouchableOpacity>
+      {/* ===================================================== */}
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      {displayText ? (
+        <Text style={styles.output}>Hasil: {displayText}</Text>
+      ) : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: "#e8f2fe",
+    justifyContent: "center",
+    padding: 20,
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  iconContainer: {
+    alignItems: "center",
+    marginBottom: 10,
   },
   title: {
-    textAlign: 'center',
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "red",
+    marginBottom: 20,
+    textAlign: "center",
   },
-  code: {
-    textTransform: 'uppercase',
+  input: {
+    borderWidth: 2,
+    borderColor: "blue",
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 20,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  // === GAYA BARU UNTUK TOMBOL KUSTOM ===
+  customButton: {
+    backgroundColor: "#2196F3", // Warna biru tombol
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+    flexDirection: "row", // Agar ikon dan teks sejajar horizontal
+    alignItems: "center", // Agar berada di tengah secara vertikal
+    justifyContent: "center", // Agar berada di tengah secara horizontal
+    elevation: 3, // Efek bayangan (Android)
+  },
+  buttonIcon: {
+    marginRight: 10, // Jarak antara ikon dan teks
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  // =======================================
+  output: {
+    fontSize: 18,
+    marginTop: 20,
+    textAlign: "center",
+    color: "#333",
+    fontWeight: "600",
   },
 });
